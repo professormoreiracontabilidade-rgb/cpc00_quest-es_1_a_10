@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFC na Palma da Mão - CPC 00</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(180deg,#eef8ff,#dff2ff);
+  color:#1c2b36;
+}
+
+.app{
+  max-width:430px;
+  margin:auto;
+  min-height:100vh;
+  padding:12px;
+}
+
+.header{
+  background:linear-gradient(135deg,#009dff,#3dbdff,#7ddcff);
+  color:white;
+  padding:18px;
+  border-radius:24px;
+  text-align:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.18);
+  margin-bottom:12px;
+}
+
+.header h1{
+  margin:0;
+  font-size:21px;
+}
+
+.header h2{
+  margin:6px 0 0;
+  font-size:15px;
+}
+
+.header p{
+  margin-top:6px;
+  font-size:12px;
+}
+
+.topo{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.info{
+  flex:1;
+  background:white;
+  padding:10px;
+  border-radius:14px;
+  text-align:center;
+  color:#0086d1;
+  font-size:13px;
+  font-weight:bold;
+  box-shadow:0 3px 10px rgba(0,0,0,.10);
+}
+
+.painel{
+  background:white;
+  border-radius:18px;
+  padding:10px;
+  margin-bottom:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.10);
+}
+
+.painel h3{
+  margin:0 0 10px;
+  text-align:center;
+  color:#0086d1;
+  font-size:13px;
+}
+
+.grade{
+  display:flex;
+  overflow-x:auto;
+  gap:6px;
+}
+
+.btn-numero{
+  min-width:42px;
+  padding:8px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#00a6ff,#4fc9ff,#7fe0ff);
+  color:white;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 3px 8px rgba(0,0,0,.15);
+}
+
+.btn-numero.ativo{
+  outline:3px solid #ffe082;
+}
+
+.card{
+  background:white;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
+  min-height:540px;
+}
+
+.enunciado{
+  font-size:15px;
+  line-height:1.6;
+  color:#005b91;
+  font-weight:bold;
+  white-space:pre-line;
+}
+
+.alternativa{
+  background:#f4fbff;
+  border:2px solid #c8ecff;
+  border-radius:16px;
+  padding:14px;
+  margin:10px 0;
+  cursor:pointer;
+  line-height:1.45;
+  font-size:14px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.alternativa:hover{
+  background:#e8f8ff;
+}
+
+.alternativa:active{
+  transform:scale(.98);
+}
+
+.correta{
+  background:#d9ffd9!important;
+  border-color:#17a317!important;
+}
+
+.errada{
+  background:#ffdcdc!important;
+  border-color:#d10000!important;
+}
+
+.resposta{
+  display:none;
+  margin-top:18px;
+  background:#eef9ff;
+  border-left:6px solid #00a6ff;
+  border-radius:14px;
+  padding:15px;
+  line-height:1.6;
+  font-size:14px;
+  white-space:pre-line;
+}
+
+.exibir .resposta{
+  display:block;
+}
+
+.botoes{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:18px;
+}
+
+button{
+  background:linear-gradient(135deg,#009dff,#3dbdff,#7ddcff);
+  color:white;
+  border:none;
+  border-radius:14px;
+  padding:12px;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.btn-largo{
+  grid-column:span 2;
+}
+
+.rodape{
+  text-align:center;
+  margin:14px 0 4px;
+  color:#0086d1;
+  font-size:12px;
+  font-weight:bold;
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .header,
+  .topo,
+  .painel,
+  .botoes,
+  .rodape{
+    display:none!important;
+  }
+
+  .app{
+    max-width:100%;
+    padding:0;
+  }
+
+  .card{
+    box-shadow:none;
+    border:1px solid #ccc;
+    border-radius:10px;
+    page-break-after:always;
+    min-height:auto;
+  }
+
+  .com-resposta .resposta{
+    display:block!important;
+  }
+
+  .sem-resposta .resposta{
+    display:none!important;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="header">
+  <h1>📱 CFC NA PALMA DA MÃO</h1>
+  <h2>CPC 00 (R2)</h2>
+  <p>Curso de Contabilidade Professor Moreira</p>
+</div>
+
+<div class="topo">
+  <div class="info" id="score">0 / 10</div>
+  <div class="info" id="contador">Questão 1</div>
+</div>
+
+<div class="painel">
+  <h3>📌 Navegação Rápida</h3>
+  <div class="grade" id="painelQuestoes"></div>
+</div>
+
+<div id="quiz"></div>
+
+<div class="rodape">
+Curso de Contabilidade Professor Moreira
+</div>
+
+</div>
+
+<script>
+
+const questoes = [
+
+{
+q:`01. Uma empresa alimentícia foi multada por excesso de carga em caminhão interestadual. A empresa decidiu esperar o prazo final da multa para reconhecer a despesa na DRE de 2024.
+
+A característica qualitativa não atendida foi:`,
+a:[
+`(A) Neutralidade.`,
+`(B) Tempestividade.`,
+`(C) Continuidade.`,
+`(D) Materialidade.`,
+`(E) Compreensibilidade.`
+],
+c:1,
+r:`✅ Gabarito: B
+
+A empresa deixou de reconhecer a despesa no momento adequado.
+
+A característica violada foi a tempestividade, pois a informação não foi divulgada em tempo útil para decisão.`
+},
+
+{
+q:`02. Um supermercado perdeu todo o estoque devido às chuvas e baixou o estoque imediatamente, mesmo sem laudo oficial.
+
+A informação apresenta a característica qualitativa da:`,
+a:[
+`(A) Neutralidade.`,
+`(B) Materialidade.`,
+`(C) Verificabilidade.`,
+`(D) Tempestividade.`
+],
+c:3,
+r:`✅ Gabarito: D
+
+A entidade reconheceu rapidamente a perda para tornar a informação útil aos usuários.
+
+Característica: tempestividade.`
+},
+
+{
+q:`03. Segundo a NBC TG Estrutura Conceitual, demonstrações consolidadas fornecem informações:`,
+a:[
+`(A) apenas das controladas.`,
+`(B) apenas da controladora.`,
+`(C) da controladora e controladas como entidades independentes.`,
+`(D) da controladora e controladas como uma única entidade que reporta.`
+],
+c:3,
+r:`✅ Gabarito: D
+
+As demonstrações consolidadas tratam o grupo econômico como uma única entidade.`
+},
+
+{
+q:`04. Patrimônio líquido é a participação nos ativos após:`,
+a:[
+`(A) a dedução dos passivos.`,
+`(B) a dedução das despesas.`,
+`(C) o acréscimo das receitas.`,
+`(D) o acréscimo dos passivos.`
+],
+c:0,
+r:`✅ Gabarito: A
+
+PL = Ativos – Passivos`
+},
+
+{
+q:`05. Para haver representação fidedigna, a informação precisa ser:`,
+a:[
+`(A) completa, neutra e isenta de erros.`,
+`(B) confiável, tempestiva e com erros mínimos.`,
+`(C) tempestiva, útil e comparável.`,
+`(D) consistente, completa e compreensível.`
+],
+c:0,
+r:`✅ Gabarito: A
+
+Representação fidedigna:
+✔ completa
+✔ neutra
+✔ livre de erros`
+},
+
+{
+q:`06. Relacione:
+
+a. Despesa
+b. Patrimônio Líquido
+c. Receita
+
+Definições:
+I. aumento do PL
+II. redução do PL
+III. participação residual nos ativos
+
+A sequência correta é:`,
+a:[
+`(A) II – III – I.`,
+`(B) I – III – II.`,
+`(C) II – I – III.`,
+`(D) I – II – III.`
+],
+c:0,
+r:`✅ Gabarito: A
+
+Despesa → reduz PL.
+PL → participação residual.
+Receita → aumenta PL.`
+},
+
+{
+q:`07. Segundo a continuidade operacional, presume-se que a entidade não tem intenção de:`,
+a:[
+`(A) mudar o local de atuação.`,
+`(B) entrar em liquidação.`,
+`(C) substituir estratégias.`,
+`(D) deixar de publicar relatórios.`,
+`(E) continuar operando indefinidamente.`
+],
+c:1,
+r:`✅ Gabarito: B
+
+Continuidade:
+presume-se que a entidade continuará em operação e não entrará em liquidação.`
+},
+
+{
+q:`08. O objetivo do relatório financeiro para fins gerais inclui decisões relacionadas a:`,
+a:[
+`(A) distribuir resultados.`,
+`(B) expandir negócios.`,
+`(C) aumentar preços.`,
+`(D) capital circulante.`,
+`(E) comprar, vender ou manter instrumentos patrimoniais e de dívida.`
+],
+c:4,
+r:`✅ Gabarito: E
+
+Os relatórios auxiliam investidores e credores nas decisões econômicas.`
+},
+
+{
+q:`09. Um ativo necessariamente:`,
+a:[
+`(A) é corpóreo.`,
+`(B) depende de evento futuro.`,
+`(C) possui potencial de gerar benefícios econômicos.`,
+`(D) representa direito perante acionistas.`,
+`(E) foi adquirido de terceiros.`
+],
+c:2,
+r:`✅ Gabarito: C
+
+Ativo:
+recurso econômico com potencial de gerar benefícios futuros.`
+},
+
+{
+q:`10. Sobre a restrição do custo nas informações financeiras, assinale a correta:`,
+a:[
+`(A) V – V – V.`,
+`(B) V – V – F.`,
+`(C) V – F – V.`,
+`(D) F – V – V.`,
+`(E) V – F – F.`
+],
+c:1,
+r:`✅ Gabarito: B
+
+As duas primeiras afirmativas estão corretas.
+A terceira está errada.`
+}
+
+];
+
+let atual = 0;
+let pontos = 0;
+let respondidas = Array(questoes.length).fill(false);
+let respostasAluno = Array(questoes.length).fill(null);
+
+function carregarQuestao(){
+
+const q = questoes[atual];
+
+document.getElementById("contador").innerText =
+`Questão ${atual + 1}`;
+
+document.getElementById("quiz").innerHTML = `
+
+<div class="card" id="card">
+
+<div class="enunciado">${q.q}</div>
+
+${q.a.map((alt,i)=>`
+<div class="alternativa" onclick="responder(${i})">
+${alt}
+</div>
+`).join("")}
+
+<div class="resposta">${q.r}</div>
+
+<div class="botoes">
+
+<button onclick="voltar()">⬅️ Voltar</button>
+
+<button onclick="proxima()">Próxima ➡️</button>
+
+<button onclick="mostrarResposta()" class="btn-largo">
+👁️ Mostrar Resposta
+</button>
+
+<button onclick="imprimirComResposta()">
+📄 Com Resposta
+</button>
+
+<button onclick="imprimirSemResposta()">
+📄 Sem Resposta
+</button>
+
+<button onclick="reiniciar()" class="btn-largo">
+🔄 Reiniciar
+</button>
+
+</div>
+
+</div>
+`;
+
+restaurarVisual();
+atualizarPainel();
+
+}
+
+function responder(i){
+
+if(respondidas[atual]) return;
+
+respondidas[atual] = true;
+respostasAluno[atual] = i;
+
+if(i === questoes[atual].c){
+pontos++;
+}
+
+marcarAlternativas();
+
+document.getElementById("card")
+.classList.add("exibir");
+
+atualizarScore();
+atualizarPainel();
+
+}
+
+function marcarAlternativas(){
+
+const alternativas =
+document.querySelectorAll(".alternativa");
+
+alternativas.forEach((alt,index)=>{
+
+if(index === questoes[atual].c){
+alt.classList.add("correta");
+}
+
+if(index === respostasAluno[atual]
+&& index !== questoes[atual].c){
+alt.classList.add("errada");
+}
+
+});
+
+}
+
+function restaurarVisual(){
+
+if(respondidas[atual]){
+
+marcarAlternativas();
+
+document.getElementById("card")
+.classList.add("exibir");
+
+}
+
+}
+
+function atualizarScore(){
+
+document.getElementById("score").innerText =
+`${pontos} / ${questoes.length}`;
+
+}
+
+function atualizarPainel(){
+
+const painel =
+document.getElementById("painelQuestoes");
+
+painel.innerHTML = "";
+
+questoes.forEach((q,i)=>{
+
+let status = "⏳";
+
+if(respondidas[i]){
+status =
+respostasAluno[i] === questoes[i].c
+? "✅" : "❌";
+}
+
+painel.innerHTML += `
+<button class="btn-numero ${i === atual ? 'ativo' : ''}"
+onclick="irPara(${i})">
+${i+1} ${status}
+</button>
+`;
+
+});
+
+}
+
+function irPara(i){
+atual = i;
+carregarQuestao();
+}
+
+function mostrarResposta(){
+document.getElementById("card")
+.classList.add("exibir");
+}
+
+function proxima(){
+
+if(atual < questoes.length -1){
+atual++;
+carregarQuestao();
+}
+
+}
+
+function voltar(){
+
+if(atual > 0){
+atual--;
+carregarQuestao();
+}
+
+}
+
+function reiniciar(){
+
+atual = 0;
+pontos = 0;
+
+respondidas =
+Array(questoes.length).fill(false);
+
+respostasAluno =
+Array(questoes.length).fill(null);
+
+atualizarScore();
+carregarQuestao();
+
+}
+
+function gerarTodas(){
+
+const quiz = document.getElementById("quiz");
+
+quiz.innerHTML = "";
+
+questoes.forEach((q)=>{
+
+quiz.innerHTML += `
+
+<div class="card">
+
+<div class="enunciado">${q.q}</div>
+
+${q.a.map(alt=>
+`<div class="alternativa">${alt}</div>`
+).join("")}
+
+<div class="resposta">${q.r}</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+function imprimirComResposta(){
+
+document.body.classList.remove("sem-resposta");
+
+document.body.classList.add("com-resposta");
+
+gerarTodas();
+
+window.print();
+
+carregarQuestao();
+
+}
+
+function imprimirSemResposta(){
+
+document.body.classList.remove("com-resposta");
+
+document.body.classList.add("sem-resposta");
+
+gerarTodas();
+
+window.print();
+
+carregarQuestao();
+
+}
+
+carregarQuestao();
+atualizarScore();
+
+</script>
+
+</body>
+</html>
